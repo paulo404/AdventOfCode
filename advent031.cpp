@@ -1,8 +1,11 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <sstream>
 #include <climits>
 
+
+// TODO trocar de mat pra  map
 #define MAXHEIGHT 1000
 #define MAXWIDTH 1000
 
@@ -15,39 +18,54 @@ int main() {
 	// central port is at 1,1
 	int curx, cury = 1;
 
-	// read first line
+    // read first line
 	string s; 
-	while (true)  {
-		cin >> s;
-		string* f = s.split();
-		int i,j,rep = 0;
+	while (getline(cin, s))  {
+		stringstream ss(s);
+		string dir;
+		ss >> dir;
+		cout << "in: " << s << endl;
+		
+		int i=0,j=0,rep=0;
+		
+        //cout << i << " " << j << " " << rep << " ";
+        
+		if (dir == "s")	break;
 
-		if (f[0] == "s")	break;
+		if (dir == "D")	i=1; 
+		if (dir == "U")	i=-1; 
+		if (dir == "R")	j=1; 
+		if (dir == "L")	j=-1; 
 
-		if (f[0] == "D")	i=1; 
-		if (f[0] == "U")	i=-1; 
-		if (f[0] == "R")	j=1; 
-		if (f[0] == "L")	j=-1; 
-
-		f[1] >> rep;
+		ss >> rep;
+		//cout << i << " " << j << " " << rep << endl;
 		
 		// draw line
-		for (int k=0; k < rep; k++)
+		for (int k=0; k < rep; k++) {
+		    cout << "k " << k << endl;
 			m[cury+=i][curx+=j] = 1;
+			cout << "m[" << cury << "][" << curx << "]" << endl;
+		}
+		    
 	}
-// read 2nd line
-	while (cin >> s)  {
-		string[] f = s.split();
+	cout << "1";
+	
+    // read 2nd line
+	while (getline(cin, s))  {
+		stringstream ss(s);
+		string dir;
+		cin >> dir;
+		
 		int i,j,rep = 0;
 
-		if (f[0] == "s")	break;
+		if (dir == "s")	break;
 
-		if (f[0] == "D")	i=-1; 
-		if (f[0] == "U")	i=1; 
-		if (f[0] == "R")	j=1; 
-		if (f[0] == "L")	j=-1; 
+		if (dir == "D")	i=1; 
+		if (dir == "U")	i=-1; 
+		if (dir == "R")	j=1; 
+		if (dir == "L")	j=-1; 
 
-		f[1] >> rep;
+		ss >> rep;
 		
 		// mark collisions
 		for (int k=0; k < rep; k++)
