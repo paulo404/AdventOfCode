@@ -8,7 +8,7 @@
 using namespace std;
 
 int main() {
-	map<pair<int,int>,int> m;
+	map<pair<int,int>,int> m, n;
 	vector<pair<int,int>> collision;
 
 	// central port is at 1,1
@@ -16,15 +16,15 @@ int main() {
 
     // read first line
 	string s; 
+	int cost = 0;
 	while (getline(cin, s))  {
 		stringstream ss(s);
 		string dir;
 		ss >> dir;
-		//cout << "in: " << s << endl;
 		
 		int i=0,j=0,rep=0;
-		if (dir == "S")	break;
 
+		if (dir == "S")	break;
 		if (dir == "D")	i=-1; 
 		if (dir == "U")	i=1; 
 		if (dir == "R")	j=1; 
@@ -37,17 +37,16 @@ int main() {
 		
 		// draw line
 		for (int k=0; k < rep; k++) {
-		    m[make_pair(cury+=i,curx+=j)] = 1;
-		    //cout << cury << " " << curx << " " << k << " " << endl;
+		    pair<int,int> p = make_pair(cury+=i,curx+=j);
+				cost++;
+		    m[p] = m.count(p)? m[p] : cost;
 		}
-		    
 	}
-	//cout << "1";
+
+	curx=1;
+	cury=1;
+	cost=0;
 	
-	//back to central point
-	curx=1, cury=1;
-	cout << "-------------------------------------" << endl;
-    // read 2nd line
 	while (getline(cin, s))  {
 		stringstream ss(s);
 		string dir;
@@ -55,6 +54,7 @@ int main() {
 		
 		int i=0,j=0,rep=0;
 
+		if (dir == "S")	break;
 		if (dir == "D")	i=-1; 
 		if (dir == "U")	i=1; 
 		if (dir == "R")	j=1; 
@@ -65,22 +65,20 @@ int main() {
 		//check deu ruim
 		if (i*j)    return 1;
 		
-		// mark collisions
+		// draw line
 		for (int k=0; k < rep; k++) {
 		    pair<int,int> p = make_pair(cury+=i,curx+=j);
-		    if (m[p])	
-			    collision.push_back(p);
-		    //cout << cury << " " << curx << " " << k << " " << endl;
+				cost++;
+		    n[p] = n.count(p)? n[p] : cost;
+				if (m[p])
+					collision.push_back(p);
 		}
-			
 	}
 	
 	// find closest collsion
 	int mindiff = INT_MAX;
  	for (auto p : collision) {
-		int diff = abs(p.first - 1) + abs(p.second - 1);
-		cout << p.first << " " << p.second << endl;
-		//cout << diff << endl;
+		int diff = m[p] + n[p];
 		mindiff = diff < mindiff ? diff : mindiff;
  	}
 	cout << mindiff << endl;
