@@ -23,7 +23,6 @@ int numArgs(unsigned int op) {
 		//exit
 		case 99: return 0;
 	}
-	//cout << "fudeu\n";
 	return -1; 
 }
 
@@ -53,17 +52,12 @@ int main() {
 	
 	// run program
 	while (true) {
-		//cout<<"pos"<<prog_pos<<"\n";	
 		unsigned int opcode = prog[prog_pos++];				//reads opcode, places increments pc
 		unsigned int op = opcode % 100;
 		unsigned int mode = opcode / 100;
-		//cout<<"aqui\n";
 		unsigned int n_args = numArgs(op);
-		//cout<<"na:"<<n_args<<endl;
-		//int write = !(op == 5 || op == 6 || op == 99);
 		vector<int*> a = getArgs(mode, n_args);
 
-		//cout<<"op"<<op<<"\n";	
 		switch (op) {
 			case 1:  *(a[2]) = *(a[0]) + *(a[1]);					break;
 			case 2:  *(a[2]) = *(a[0]) * *(a[1]);					break;
@@ -75,7 +69,6 @@ int main() {
 			case 8:  *(a[2]) = *(a[0]) == *(a[1])? 1 : 0;								break;
 			case 99: return 1;
 		}
-		//cout<<"opcompleted\n";
 	}
 
 	return 1;
