@@ -4,6 +4,7 @@
 #include <fstream>
 #include <climits>
 #include <sstream>
+#include <algorithm>
 using namespace std;
 
 #define MAX 43210
@@ -44,16 +45,9 @@ vector<int*> getArgs(unsigned int mode, unsigned int num_args) {
 	return a;
 }
 
-//same and only digits below 5
-int testnum(string s) {
-	vector<int> count(5,0);
-	for (int k = 0; k<LENGTH; k++) {
-		if (count[s[k]-'0']++ || s[k] >='5') return 1;
-	}
-	return 0;
-} 
 
-int runOP(stringstream in) {
+int runOP(int* in) {
+	int i = 0;
 	while (true) {
 		unsigned int opcode = prog[prog_pos++];				//reads opcode, places increments pc
 		unsigned int op = opcode % 100;
@@ -64,7 +58,7 @@ int runOP(stringstream in) {
 		switch (op) {
 			case 1:  *(a[2]) = *(a[0]) + *(a[1]);					break;
 			case 2:  *(a[2]) = *(a[0]) * *(a[1]);					break;
-			case 3:  in >> *(a[0]);											break;
+			case 3:  *(a[0]) = in[i++];											break;
 			case 4:  return *(a[0]);							break;
 			case 5:  prog_pos = *(a[0])? *(a[1]) : prog_pos;					break;
 			case 6:  prog_pos = !*(a[0])? *(a[1]) : prog_pos;					break;
@@ -77,7 +71,7 @@ int runOP(stringstream in) {
 
 int main() {
 	//ifstream file("in05ex");
-	ifstream file("in05alt");
+	ifstream file("in07alt");
 	int x;
 
 	while  ( file >> x ) {
@@ -86,28 +80,26 @@ int main() {
 	file.close();	
 
 	int max = INT_MIN;
-	char cs[6];
 	int in = 0;
-
-	for(int i=MIN;i<=MAX;i++) {
-		//get valid phase sequences
-		sprintf(cs, "%05d", i);
-		string phaseSeq(cs);
-		if (testnum(phaseSeq)) continue;
-
-		//run programs in sequence
-		for (int j=0;j<5;j++) {
-			stringstream runIn;	
-			runIn << phaseSeq[j] << in;
-			in = runOP(runIn);			// TODO não dá pra passar stringstream??
-		}
-		cout << in << endl;
-		max = in>max? in : max;
-	}
+	vector<int> orig(prog);
+	string s = "01234";
 	
-		
-		
-	// run program
+	do {
+		//run programs in sequence
+		//cout << "permutation:" << s << endl;
+		in = 0;
+		for (int j=0;j<5;j++) {
+			prog_pos = 0;
+			prog = vector<int>(orig);
+			//cout << "phase:" << s[j]-'0' << " in:" << in << endl;
+			int invet[2] = {s[j]-'0', in};
+			in = runOP(invet);			
+		}
+		//cout << in << endl;
+		max = in>max? in : max;
+	} while (next_permutation(s.begin(), s.end()));
+
+	cout << max << endl;	
 
 	return 1;
 }
