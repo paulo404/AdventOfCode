@@ -41,7 +41,7 @@ vector<int*> getArgs(vector<int>* prog, int* pc, unsigned int mode,  unsigned in
 }
 
 
-int runProg(vector<int>* prog,  int* pc, int* in,  int* out) {
+int runProg(vector<int>* prog,  int* pc, int* io,  int readphase, int phase) {
 	while (true) {
 		unsigned int opcode = (*prog)[(*pc)++];				//reads opcode, places increments pc
 		unsigned int op = opcode % 100;
@@ -54,9 +54,14 @@ int runProg(vector<int>* prog,  int* pc, int* in,  int* out) {
 		 					 break;
 			case 2:  *(a[2]) = *(a[0]) * *(a[1]);
 		 					 break;
-			case 3:  *(a[0]) = *in;
+			case 3:  if (readphase) {
+							 	*(a[0]) = phase;
+							 	readphase = false;
+							 } else
+								 *(a[0]) = *io;
+							 //cout << id << " reading " << *(a[0]) << endl;
 							 break;
-			case 4:  *out = *(a[0]);
+			case 4:  *io = *(a[0]);
 							 return 0;	//mada mada da ne
 			case 5:  *pc = *(a[0])? *(a[1]) : *pc;
 		 					 break;
@@ -84,38 +89,31 @@ int main() {
 	int max = INT_MIN;
 	//vector<int> phase({9,8,7,6,5});
 	
-	vector<int> phase({5,6,7,8,9});
+	string phase = "56789";
+	int asciioffset = '0';
 	//run programs in sequence
 	do {
 		//copy code for each amplifier
-		
-		//print vector
-		for (auto const& v : phase)
-			cout << v << " ";
-		cout << endl;
-
 		vector<vector<int>> program(LENGTH);
 		for (int i=0; i<LENGTH;i++) 
 			program[i] = vector<int>(orig);
 
 		//set values for run
-		vector<int> in(phase);		//first input is the sequence
-		vector<int> out(LENGTH, 0);
 		vector<int> pc(LENGTH, 0);
-		int res = 0;
-		int first = true;
+		int res = 0, io = 0;
+		int firstrun = true;
+
 		//run amplifier sequence until last amplifier stops
 		while (true) {
-			for (int i=0; i<LENGTH;i++) 
-				res = runProg(&program[i], &pc[i], &in[i], &out[i]);
+			for (int i=0; i<LENGTH;i++) {
+				res = runProg(&program[i], &pc[i], &io, firstrun, phase[i]-asciioffset);  
+			}
 			if (res) break;		
-			in = vector<int>(out);
-			if (first) {first = false; in[0] = 0; }
+			if (firstrun) firstrun = false;
 		}
-		cout << "output:" << out.back() << endl;
 
 		//update max
-		int val = out.back();
+		int val = io;
 		max = val>max? val : max;
 
 	} while (next_permutation(phase.begin(), phase.end()));
