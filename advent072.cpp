@@ -28,22 +28,22 @@ int numArgs(unsigned int op) {
 	return -1; 
 }
 
-vector<int*> getArgs(vector<int> prog, int* pc, unsigned int mode,  unsigned int num_args) {
+vector<int*> getArgs(vector<int>* prog, int* pc, unsigned int mode,  unsigned int num_args) {
 	vector<int*> a;
 	while (num_args--) {
 		int flag = mode % 10;
 		mode /= 10;
 		//							immediate mode		position mode
-		int* val = flag? &prog[(*pc)++] : &prog[prog[(*pc)++]]; 
+		int* val = flag? &(*prog)[(*pc)++] : &(*prog)[(*prog)[(*pc)++]]; 
 		a.push_back(val);	
 	}
 	return a;
 }
 
 
-int runProg(vector<int> prog,  int* pc, int* in,  int* out) {
+int runProg(vector<int>* prog,  int* pc, int* in,  int* out) {
 	while (true) {
-		unsigned int opcode = prog[(*pc)++];				//reads opcode, places increments pc
+		unsigned int opcode = (*prog)[(*pc)++];				//reads opcode, places increments pc
 		unsigned int op = opcode % 100;
 		unsigned int mode = opcode / 100;
 		unsigned int n_args = numArgs(op);
@@ -73,23 +73,28 @@ int runProg(vector<int> prog,  int* pc, int* in,  int* out) {
 
 int main() {
 	// read input
-	ifstream file("in07alt");
 	int x;
 
 	vector<int> orig;
-	while  ( file >> x ) {
+	while  ( cin >> x ) {
 	    orig.push_back(x);
 	}
-	file.close();	
 
 	// set control? variables
 	int max = INT_MIN;
-	vector<int> phase({5,6,7,8,9});
+	vector<int> phase({9,8,7,6,5});
+	//vector<int> phase({5,6,7,8,9});
 	
 	//run programs in sequence
 	do {
 		//copy code for each amplifier
-		vector<vector<int>> program;
+		
+		//print vector
+		for (auto const& v : phase)
+			cout << v << " ";
+		cout << endl;
+
+		vector<vector<int>> program(LENGTH);
 		for (int i=0; i<LENGTH;i++) 
 			program[i] = vector<int>(orig);
 
@@ -102,11 +107,11 @@ int main() {
 		//run amplifier sequence until last amplifier stops
 		while (true) {
 			for (int i=0; i<LENGTH;i++) 
-				res = runProg(program[i], &pc[i], &in[i], &out[i]);
-			cout << "deu uma" << endl;
+				res = runProg(&program[i], &pc[i], &in[i], &out[i]);
 			if (res) break;		
 			in = vector<int>(out);
 		}
+		cout << "output:" << out.back() << endl;
 
 		//update max
 		int val = out.back();
