@@ -82,9 +82,9 @@ int main() {
 
 	// set control? variables
 	int max = INT_MIN;
-	vector<int> phase({9,8,7,6,5});
-	//vector<int> phase({5,6,7,8,9});
+	//vector<int> phase({9,8,7,6,5});
 	
+	vector<int> phase({5,6,7,8,9});
 	//run programs in sequence
 	do {
 		//copy code for each amplifier
@@ -103,13 +103,14 @@ int main() {
 		vector<int> out(LENGTH, 0);
 		vector<int> pc(LENGTH, 0);
 		int res = 0;
-
+		int first = true;
 		//run amplifier sequence until last amplifier stops
 		while (true) {
 			for (int i=0; i<LENGTH;i++) 
 				res = runProg(&program[i], &pc[i], &in[i], &out[i]);
 			if (res) break;		
 			in = vector<int>(out);
+			if (first) {first = false; in[0] = 0; }
 		}
 		cout << "output:" << out.back() << endl;
 
