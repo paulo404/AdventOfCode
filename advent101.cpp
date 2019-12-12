@@ -21,7 +21,8 @@ std::pair<T,U> operator+(const std::pair<T,U> & l,const std::pair<T,U> & r) {
 }
 
 inline int inboundary(pair<int,int> p, int height, int width) {
-	return p.first>=0 && p.second>=0 && p.first<height &&  p.second<width;
+	//cout << "    y:0<=" << p.first << "<=" << height << "x:0<=" << p.second << "<=" << width << endl;
+	return p.first>=0 && p.second>=0 && p.first<=height &&  p.second<=width;
 }
 
 inline int sgn(int val) { return (val>0)-(val<0); }
@@ -32,8 +33,8 @@ pair<int,int> irrFrac(pair<int,int> p) {
 	int d = p.second;
 
 	int red;
-	while ( ( red = abs(__gcd(n,d)) ) > 1 && n != 0 && d != 0) {
-		cout << "n:" << n << " d:" << d << endl;
+	while ( ( red = abs(__gcd(n,d)) ) > 1 ) {
+		////cout << "n:" << n << " d:" << d << endl;
 		n /= red;	
 		d /= red;	
 	}
@@ -46,31 +47,36 @@ int main() {
 	// read input
 	map<pair<int,int>,int>  m;
 	string line;
-	int height, width;
+	int height=0, width=0;
 
-	for (int height=0; getline(cin, line); height++)
-		for (int width=0; width<line.length(); width++)
-			if (line[width] == '#' ) m[make_pair(height,width)]=1;
+	for (int i=0; getline(cin, line); i++)
+		for (int j=0; j<line.length(); j++) {
+			if (line[j] == '#' ) m[make_pair(i,j)]=1;
+			height = max(height,i);
+			width = max(width, j);
+		}
 
-	cout << "finished reading" << endl;
+	//cout << "finished reading" << endl;
 
 	// find best viewing spot
 	int best = 0;
 	for (auto const& [a1, trash0] : m) {  //syntax is c++17 only
 		map<pair<int,int>,int> am(m);
-
-		cout << "calculating for " << a1.first << " " << a1.second << endl;
+		am.erase(a1);
+		//cout << "calculating for " << a1.first << " " << a1.second << endl;
 		for (auto const& [a2, trash1] : am) {
-			if (a1 == a2) break;
+			if (a1 == a2) continue;
 			//find fraction
 			pair<int,int> irrf = irrFrac(a2-a1);
-			cout << "  and : " << a2.first << " " << a2.second << ": frac" << irrf.first << " " << irrf.second << endl;
+			//cout << "  and : " << a2.first << " " << a2.second << ": frac" << irrf.first << " " << irrf.second << endl;
 			//for all multiples of fraction
-			for (pair<int,int> i=a2+irrf; inboundary(i,height, width); i= i+irrf)
+			for (pair<int,int> i=a2+irrf; inboundary(i,height, width); i= i+irrf) {
+				//cout << "    erasing " << i.first << " " << i.second << endl;
 				am.erase(i);
-			//delete	key
+			}
 		}
 
+		//cout << "elem	" << am.size() << endl;
 		best = am.size() > best ? am.size() : best;
 	}
 
