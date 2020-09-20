@@ -80,7 +80,7 @@ void printAsteroids(map<pair<int,int>,int>& m, int height, int width, pair<int,i
 	}
 
 	//pause
-	usleep(10000);
+	usleep(50000);
 }
 
 pair<int,int> destroy( pair<int,int> station, map<pair<int,int>,int>*  m, int numToDestroy ) {
@@ -169,7 +169,7 @@ int main() {
 	}
 
 	//destroy immediate asteroids clockwise order
-	pair<int,int> lastDest = destroy( bcord, &m, 200000 );
+	pair<int,int> lastDest = destroy( bcord, &m, 200 );
 
 	cout << lastDest.second * 100 + lastDest.first << endl;
 }
