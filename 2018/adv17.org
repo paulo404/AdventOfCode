@@ -1,0 +1,12 @@
+#+TITLE: Adv17
+* store additional information in matrix
+** distances till next clay block
+- only down
+- all directions periodically, ie i % 4 == 1 stores blocks till down, i % 4 == 2 stores left, etc.
+  + same idea but instead of remainders, group them in squares instead
+
+
+
+
+
+* do it in opengl or in another graphics library
