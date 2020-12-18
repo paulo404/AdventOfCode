@@ -49,8 +49,8 @@ def part2( fields, tickets, my_ticket):
         d[fname] = index
         if len(remaining) == 0: break
         for i in range(len(remaining)):
-            try: remaining[i][1].remove(index)
-            except: 'nop'
+            if index in remaining[i][1]:
+                remaining[i][1].remove(index)
 
     prod = 1
     for k,v in d.items():

@@ -34,7 +34,7 @@ def step(m, dim) :
     rule = np.vectorize(apply_rule)
     return rule( nm, m )
 
-def part1conv(init, steps) :
+def part1(init, steps) :
     #create mat m
     growth = steps * 2 + 2 #grows in both directions ( must be bigger than last size )
     shape = tuple( np.array( init.shape ) + growth )
@@ -49,7 +49,7 @@ def part1conv(init, steps) :
     return m.sum()
 
 
-def part2conv(init, steps) :
+def part2(init, steps) :
     #create mat m
     growth = steps * 2 + 2 #grows in both directions ( must be bigger than last size )
     shape = tuple( np.array( init.shape ) + growth )
@@ -61,86 +61,6 @@ def part2conv(init, steps) :
 
     for i in range(steps) :
         m = step(m,4)
-    return m.sum()
-
-def part1(init, steps) :
-
-    np.set_printoptions(threshold=sys.maxsize)
-    steps += 1 #extra padding when looking at neighbors
-    #create mat m
-    growth = steps * 2 #grows in both directions
-    shape = tuple( np.array( init.shape ) + growth )
-    m = np.zeros( (1+growth, *shape), dtype=np.int16 )
-
-    #insert init in the middle of m
-    middle = tuple( np.array( m.shape ) // 2 )
-    m[middle[0]] = np.pad( init, (steps,) )
-
-    #if using convalution
-    #for i in range(steps) :
-    #    m = step(m)
-
-    #DONE pad 1 more?
-
-    #print( m )
-    for i in range(steps-1):
-        nm = np.zeros( m.shape )
-        s = m.shape
-        for d in range(1,s[0]-1):
-            for r in range(1,s[1]-1):
-                for c in range(1,s[2]-1):
-                    e = m[d,r,c]
-                    #print( f'pos{d,r,c}' )
-                    neighm = m[d-1:d+2, r-1:r+2, c-1:c+2]
-                    if neighm.shape != (3,3,3):
-                        print( neighm.shape )
-                        exit()
-                    #print( neighm )
-                    neigh = neighm.sum() - e
-                    ans = 0
-                    if e == 1 :
-                        if neigh == 3 or neigh == 2 : ans = 1
-                    else :
-                        if neigh == 3 : ans = 1
-                    nm[d,r,c] = ans
-        #print( f'step: {i}' )
-        #print( nm )
-        m = nm
-
-    return m.sum()
-
-
-def part2(init, steps) :
-
-    steps += 1 #extra padding when looking at neighbors
-    #create mat m
-    growth = steps * 2 #grows in both directions
-    shape = tuple( np.array( init.shape ) + growth )
-    m = np.zeros( (1+growth, 1+growth, *shape), dtype=np.int16 )
-
-    #insert init in the middle of m
-    middle = tuple( np.array( m.shape ) // 2 )
-    m[middle[0],middle[1]] = np.pad( init, (steps,) )
-
-    for i in range(steps-1):
-        nm = np.zeros( m.shape )
-        s = m.shape
-        for z in range(1,s[0]-1):
-            for d in range(1,s[1]-1):
-                for r in range(1,s[2]-1):
-                    for c in range(1,s[3]-1):
-                        e = m[z,d,r,c]
-                        #print( f'pos{d,r,c}' )
-                        neighm = m[z-1:z+2,d-1:d+2, r-1:r+2, c-1:c+2]
-                        neigh = neighm.sum() - e
-                        ans = 0
-                        if e == 1 :
-                            if neigh == 3 or neigh == 2 : ans = 1
-                        else :
-                            if neigh == 3 : ans = 1
-                        nm[z,d,r,c] = ans
-        m = nm
-
     return m.sum()
 
 if __name__ == '__main__':
