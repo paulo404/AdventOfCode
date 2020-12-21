@@ -73,5 +73,5 @@ if __name__ == '__main__':
         for c in range(col):
             if inp[r][c] == '#': init[r,c] = 1
 
-    print( f"Part 1: {part1conv(init,6)}")
-    print( f"Part 2: {part2conv(init,6)}")
+    print( f"Part 1: {part1(init,6)}")
+    print( f"Part 2: {part2(init,6)}")
